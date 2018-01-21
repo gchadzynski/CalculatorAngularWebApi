@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <style>
+        tr {
+            width: 210px;
+            height: 50px;
+        }
+        button {
+            width: 50px;
+            height: 50px;
+        }
+        input[type=text] {
+            width: 200px;
+            height: 50px;
+            padding: 5px 5px; 
+            margin: 1px 0;
+            text-align: right;
+            font-size: 25px;
+        }
+    </style>
+    <script src="Scripts/angular.js"></script>
+    <script>
+        var app = angular.module('myApp', []);
+        app.controller('myCtrl', function ($scope) {
+            $scope.firstValue = "";
+            $scope.clear = false;
+            $scope.operation = "";
+            $scope.value = "0";
+            $scope.setValue = function (valueToSet) {
+                if ($scope.value.length == 1 && $scope.value == "0" || $scope.clear) {
+                    $scope.value = "";
+                    $scope.clear = false;
+                }
+                $scope.value += valueToSet
+            };
+            $scope.setOperation = function (operationSet) {
+                if (operationSet != "=") {
+                    $scope.firstValue = $scope.value;
+                    $scope.value = "";
+                    $scope.operation = operationSet;
+                }
+                else if ($scope.operation == "+") {
+                    $scope.value = parseFloat($scope.firstValue) + parseFloat($scope.value);
+                    $scope.clear = true;
+                } else if ($scope.operation == "-") {
+                    $scope.value = parseFloat($scope.firstValue) - parseFloat($scope.value);
+                    $scope.clear = true;
+                } else if ($scope.operation == "*") {
+                    $scope.value = parseFloat($scope.firstValue) * parseFloat($scope.value);
+                    $scope.clear = true;
+                } else if ($scope.operation == "/") {
+                    $scope.value = parseFloat($scope.firstValue) / parseFloat($scope.value);
+                    $scope.clear = true;
+                }
+            };
+        });
+    </script>
+</head>
+<body ng-app="myApp">
+    <div ng-controller="myCtrl">
+        <div>
+            <input type="text" value="{{value}}"/>
+        </div>
+        <div>
+            <table>
+                <tr>
+                    <td><button ng-click="setValue(7)">7</button></td>
+                    <td><button ng-click="setValue(8)">8</button></td>
+                    <td><button ng-click="setValue(9)">9</button></td>
+                    <td><button ng-click="setOperation('-')">-</button></td>
+                </tr>
+                <tr>
+                    <td><button ng-click="setValue(4)">4</button></td>
+                    <td><button ng-click="setValue(5)">5</button></td>
+                    <td><button ng-click="setValue(6)">6</button></td>
+                    <td><button ng-click="setOperation('+')">+</button></td>
+                </tr>
+                <tr>
+                    <td><button ng-click="setValue(1)">1</button></td>
+                    <td><button ng-click="setValue(2)">2</button></td>
+                    <td><button ng-click="setValue(3)">3</button></td>
+                    <td><button ng-click="setOperation('=')" >=</button></td>
+                </tr>
+                <tr>
+                    <td><button ng-click="setValue(0)">0</button></td>
+                    <td><button ng-click="setValue('.')">.</button></td>
+                    <td><button ng-click="setOperation('*')">*</button></td>
+                    <td><button ng-click="setOperation('/')">/</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
