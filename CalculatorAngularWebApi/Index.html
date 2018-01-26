@@ -14,7 +14,7 @@
         input[type=text] {
             width: 200px;
             height: 50px;
-            padding: 5px 5px; 
+            padding: 5px 5px;
             margin: 1px 0;
             text-align: right;
             font-size: 25px;
@@ -22,26 +22,25 @@
     </style>
     <script src="Scripts/angular.js"></script>
     <script>
+        function isNumeric(n) {
+            return !isNaN(parseFloat(n)) && isFinite(n);
+        }
+        var operationAloowed = ["+", "-", ", " * ", " / ""];
         var app = angular.module('myApp', []);
         app.controller('myCtrl', function ($scope) {
             $scope.firstValue = "";
             $scope.clear = false;
             $scope.operation = "";
             $scope.value = "0";
-            $scope.setValue = function (valueToSet) {
-                if ($scope.value.length == 1 && $scope.value == "0" || $scope.clear) {
+            $scope.getKeyPress = function (keyEvent) {
+                $scope.setOperation(keyEvent.key);
+                $scope.setValue(keyEvent.key);
+            };
+            $scope.runSummary = function () {
+                if ($scope.clear) {
                     $scope.value = "";
                     $scope.clear = false;
-                }
-                $scope.value += valueToSet
-            };
-            $scope.setOperation = function (operationSet) {
-                if (operationSet != "=") {
-                    $scope.firstValue = $scope.value;
-                    $scope.value = "";
-                    $scope.operation = operationSet;
-                }
-                else if ($scope.operation == "+") {
+                } else if ($scope.operation == "+") {
                     $scope.value = parseFloat($scope.firstValue) + parseFloat($scope.value);
                     $scope.clear = true;
                 } else if ($scope.operation == "-") {
@@ -54,14 +53,43 @@
                     $scope.value = parseFloat($scope.firstValue) / parseFloat($scope.value);
                     $scope.clear = true;
                 }
+            }
+            $scope.setValue = function (valueToSet) {
+                if (isNumeric(String(valueToSet))) {
+                    if ($scope.value.length == 1 && $scope.value == "0" || $scope.clear) {
+                        console.log("#1");
+                        $scope.value = "";
+                        $scope.clear = false;
+                    }
+                    console.log("#c1");
+                    $scope.value += valueToSet;
+                }
             };
-        });
+            $scope.setOperation = function (operationSet) {
+                if (operationAloowed.indexOf(operationSet) != -1) {
+                    if ($scope.firstValue != "") {
+                        console.log("#1a");
+                        $scope.runSummary();
+                        $scope.firstValue = $scope.value;
+                        $scope.operation = operationSet;
+                    } else {
+                        console.log("#1b");
+                        $scope.firstValue = $scope.value;
+                        $scope.operation = operationSet;
+                        $scope.runSummary();
+                        $scope.value = "";
+                    }
+                } else if (operationSet == "=" || operationSet == "Enter") {
+                    $scope.runSummary();
+                }
+            };
+            });
     </script>
 </head>
-<body ng-app="myApp">
-    <div ng-controller="myCtrl">
+<body ng-app="myApp" ng-keypress="getKeyPress($event)" ng-controller="myCtrl">
+<div >
         <div>
-            <input type="text" value="{{value}}"/>
+            <input  type="text" value="{{value}}"/>
         </div>
         <div>
             <table>
